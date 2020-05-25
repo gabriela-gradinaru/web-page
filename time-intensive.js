@@ -1,4 +1,4 @@
-onmessage = function(){
+
 
     var data = [];
     for (let i = 0; i < 50000; i++) {
@@ -7,4 +7,3 @@ onmessage = function(){
     }
 
     postMessage(data);
-}
