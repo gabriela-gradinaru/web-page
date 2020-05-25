@@ -1,9 +1,70 @@
-﻿<h1>Introduction to Front-end Development</h1>
-<p>A front-end developer architects and develops client part of the websites
-and applications usin web technologies (languages):</p>
-<ul>
-	<li style="color: red;">HTML</li>
-	<li style="color: blue;">CSS</li>
-	<li style="color: rgb(236, 22, 172);">JavaScript</li>
-</ul>
+﻿<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Document</title>
+		<style>
+
+			#my-button{
+                width: 200px;
+                height: 40px;
+                color: white;
+                background-color: teal;
+                border-radius: 4px;
+                line-height: 40px;
+                text-align: center;
+                font-family: sans-serif;
+            }
+
+            #my-button:hover {
+                background-color: rgb(30, 109, 109);
+                cursor: pointer;
+                font-weight: bold;
+            }
+
+		</style>
+	</head>
+
+	<body>
+
+		<h1>Introduction to Front-end Development</h1>
+		<p>A front-end developer architects and develops client part of the websites
+		and applications usin web technologies (languages):</p>
+		<ul>
+			<li style="color: red;">HTML</li>
+			<li style="color: blue;">CSS</li>
+			<li style="color: rgb(236, 22, 172);">JavaScript</li>
+		</ul>
+
+
+
+		<script>
+
+			myButton.addEventListener("click", function(){
+
+			//time-intensive operation start
+
+			const worker = new Worker('time-intensive.js');
+			worker.postMessage('Start!');
+
+			//time-intensive operation ends
+
+			console.log("Hello from statement after time-intensive operation.");
+
+
+			worker.onmessage = function(e){
+				console.log(e.data.length);
+			}
+			});
+
+
+
+
+		</script>
+	</body>
+</html>
+
+
 
