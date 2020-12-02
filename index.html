@@ -1,73 +1,159 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/jabuka.png" type="icon/png" sizes="16x16">
+    <title>Analogous Child Clock</title>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            background-color: #c6eeee;
+        }
 
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Document</title>
-		<style>
+        #canvas-container{
+            align-self: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-			#my-button{
-                width: 200px;
-                height: 40px;
-                color: white;
-                background-color: teal;
-                border-radius: 4px;
-                line-height: 40px;
-                text-align: center;
-                font-family: sans-serif;
+        #my-canvas {
+            display: block;
+            width: 100%;
+            max-width: 428px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="canvas-container">
+        <canvas id="my-canvas" width="428" height="412">
+            Your browser does not support canvas element.
+        </canvas>
+        <h2 id="date-time"></h2>
+    </div>
+
+    <script>
+
+        window.onload = init;
+
+        function init() {
+            let canvas = document.getElementById("my-canvas");
+
+
+            if (canvas.getContext) {
+
+                let ctx = canvas.getContext('2d');
+
+                let image = new Image();
+
+                image.addEventListener("load", function(){
+                    createClock(ctx, image);
+                });
+
+                image.src = "img/clock.png";
+
+            } else {
+                alert("Canvas is not supported.");
             }
+        }
 
-            #my-button:hover {
-                background-color: rgb(30, 109, 109);
-                cursor: pointer;
-                font-weight: bold;
+        var now;
+        var radius;
+
+        function createClock(ctx, image) {
+            ctx.clearRect(0, 0, 428, 412);
+            drawBackground(ctx, image);
+            drawHands(ctx);            
+            drawSigns(ctx);
+            now = new Date();
+            document.getElementById("date-time").innerHTML = now.getHours() + ":" + now.getMinutes();
+            if(now.getMinutes()<10){
+                document.getElementById("date-time").innerHTML = now.getHours() + ":0" + now.getMinutes();
             }
-
-		</style>
-	</head>
-
-	<body>
-
-		<h1>Introduction to Front-end Development</h1>
-		<p>A front-end developer architects and develops client part of the websites
-		and applications usin web technologies (languages):</p>
-		<ul>
-			<li style="color: red;">HTML</li>
-			<li style="color: blue;">CSS</li>
-			<li style="color: rgb(236, 22, 172);">JavaScript</li>
-		</ul>
-
-        <div id="my-button">Click me</div>
+            
+            setTimeout(function(){
+                 createClock(ctx, image);
+            }, 1000);
+        }
 
 
-		<script>
-
-			let myButton = document.getElementById("my-button");
-
-			myButton.addEventListener("click", function(){
-
-			//time-intensive operation start
-
-			const worker = new Worker('time-intensive.js');
-			worker.postMessage('Start!');
-
-			//time-intensive operation ends
-
-			console.log("Hello from statement after time-intensive operation.");
+        function drawBackground(ctx, image){
+            ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, image.width, image.height);
+        }
 
 
-			worker.onmessage = function(e){
-				console.log(e.data.length);
-			}
-			});
+        function drawHands(ctx){
+            ctx.save();
+
+            radius = ctx.canvas.height / 2;
+            ctx.translate(radius, radius);
+
+            now = new Date();   
+            let hour = now.getHours(); 
+            let minute = now.getMinutes();
+            let second = now.getSeconds();
+
+            //hours
+            hour = hour%12;
+            //console.log(hour);
+            hour = (hour*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60)); 
+            drawHand(ctx, hour, radius*0.6, radius*0.05);
+            //minutes
+            minute = (minute*Math.PI/30) + (second*Math.PI/(30*60));
+            drawHand(ctx, minute, radius*0.8, radius*0.035);
+            //seconds
+            second = (second*Math.PI/30);
+            drawHand(ctx, second, radius*0.9, radius*0.02);
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 10, 0, 2*Math.PI);            
+            ctx.fillStyle = '#37f5f5';
+            ctx.fill();
+
+            ctx.restore();
+        }
 
 
+        function drawHand(ctx, angle, length, width) {
+
+            ctx.lineWidth = width;
+            ctx.lineCap = 'butt';
+            ctx.strokeStyle = '#37f5f5';            
+            ctx.rotate(angle);
+
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -length);
+            ctx.stroke();
+
+            ctx.rotate(-angle);
+        }
+
+        function drawSigns(ctx){
+            ctx.translate(radius, radius);
+
+            ctx.fillStyle = '#256d6d';
+            ctx.font = 'bold 40px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('II', 0, -radius*0.85);
+            ctx.fillStyle = '#37f5f5';            
+
+            ctx.fillText('I', 0, radius*0.92);
+
+            ctx.save();
+            ctx.rotate(Math.PI / 180 * 90);
+            ctx.fillText('I', 0, -radius*0.9);
+            ctx.fillText('I', 0, radius*0.95);
+            ctx.restore();
+
+            ctx.translate(-radius, -radius);
+        }
 
 
-		</script>
-	</body>
+    </script>
+</body>
 </html>
-
-
-
